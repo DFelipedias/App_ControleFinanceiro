@@ -1,4 +1,4 @@
-# Controle Financeiro — Trabalho 2
+# Controle Financeiro
 
 Continuação do app desenvolvido no Trabalho 1, em Kotlin com Jetpack Compose. O objetivo é registrar receitas e despesas e acompanhar o saldo com navegação real entre as telas.
 
@@ -6,7 +6,7 @@ Continuação do app desenvolvido no Trabalho 1, em Kotlin com Jetpack Compose. 
 
 Daniel, Leonardo e Marcelo.
 
-Na primeira entrega, Daniel fez a Visão Geral (Main2), Leonardo fez o Extrato e Marcelo fez Nova Transação. A divisão da segunda entrega deve ser registrada pelo trio conforme a participação efetiva.
+Na primeira entrega, Daniel fez a Visão Geral (Main2), Leonardo fez o Extrato e Marcelo fez Nova Transação.
 
 ## Como abrir e rodar
 
