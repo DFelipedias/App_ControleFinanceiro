@@ -42,14 +42,3 @@ Os dados iniciais são exemplos. As alterações ficam apenas na memória; não 
 - `Componentes.kt`: barra inferior, barra superior, cards e campos compartilhados.
 - Arquivos `Tela*.kt`: conteúdo de cada tela.
 
-A navegação e o ViewModel seguem o exemplo da Aula 15. As listas reativas e as operações de inclusão/remoção seguem a ideia da Aula 12. LazyColumn e data classes atendem aos requisitos expressos no Trabalho 2.
-
-## Regras
-
-Valores devem ser positivos; receita/despesa define o efeito no saldo. A data é um campo de texto validado pelo formato dd/mm/aaaa, sem validação completa do calendário. Categorias com movimentações vinculadas não podem ser removidas. Nomes de categorias não podem se repetir. Remover uma transação atualiza os resumos.
-
-## Processo e validação
-
-Consulte [docs/PROCESSO.md](docs/PROCESSO.md), [a documentação em Word](docs/Documentacao_ControleFinanceiro_V2.docx) e [docs/TESTES.md](docs/TESTES.md).
-
-**Pendente antes da entrega:** compilar e testar no Android Studio, anexar prints ou vídeo reais das etapas e completar os relatos do trio. Não considerar a documentação concluída enquanto essas evidências estiverem ausentes.
