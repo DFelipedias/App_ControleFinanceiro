@@ -1,6 +1,6 @@
 # Controle Financeiro
 
-Continuação do app desenvolvido no Trabalho 1, em Kotlin com Jetpack Compose. O objetivo é registrar receitas e despesas e acompanhar o saldo com navegação real entre as telas.
+Continuação do app desenvolvido, em Kotlin com Jetpack Compose. O objetivo é registrar receitas e despesas e acompanhar o saldo com navegação real entre as telas.
 
 ## Integrantes
 
