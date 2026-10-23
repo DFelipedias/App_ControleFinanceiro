@@ -7,18 +7,18 @@ import androidx.room3.Delete
 import androidx.room3.Update
 
 @Dao
-interface TransacoesDao {
+interface TransacaoDao {
 
     @Insert
-    fun inserir(transacao: Transacao)
+    suspend fun inserir(transacao: Transacao)
 
     @Query("SELECT * FROM transacoes")
-    fun buscarTransacao() : List<Transacoes>
+    suspend fun buscarTransacao() : List<Transacao>
 
     @Update
-    fun atualizarTransacao(transacao: Transacoes)
+    suspend fun atualizarTransacao(transacao: Transacao)
 
     @Delete
-    fun removerTransacao(transacao: Transacoes)
+    suspend fun removerTransacao(transacao: Transacao)
 
 }

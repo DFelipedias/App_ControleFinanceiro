@@ -5,13 +5,13 @@ import androidx.room3.Database
 import androidx.room3.Room
 import androidx.room3.RoomDatabase
 
-@Database(entities = [Transacao::class], version = 1)
+@Database(entities = [Transacao::class, Categoria::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     // public static AppDatabase INSTANCE = null
 
 
-        abstract fun filmesDAO(): TransacoesDao
+        abstract fun transacaoDao(): TransacaoDao
 
     companion object {
 
