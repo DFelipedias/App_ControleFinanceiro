@@ -19,18 +19,18 @@ suspend fun buscarTransacao(transacaoDao: TransacaoDao): List<Transacao> {
     }
 }
 
-suspend fun deletarTransacao(transacao: Transacao, transacaoDao: TransacaoDao){
+suspend fun deletarTransacao(transacao: Transacao, transacaoDao: TransacaoDao) {
     try {
         transacaoDao.removerTransacao(transacao)
-    }catch (e: Exception){
+    } catch (e: Exception) {
         Log.e("Erro ao deletar", "Msg ${e.message}")
     }
 }
 
-suspend fun atualizarTransacao(transacao: Transacao, transacaoDao: TransacaoDao){
+suspend fun atualizarTransacao(transacao: Transacao, transacaoDao: TransacaoDao) {
     try {
         transacaoDao.atualizarTransacao(transacao)
-    }catch (e: Exception){
+    } catch (e: Exception) {
         Log.e("Erro ao atualizar", "Msg ${e.message}")
     }
 }

@@ -1,7 +1,8 @@
 package com.example.app_controlefinanceiro
 
-import androidx.room3.Entity
-import androidx.room3.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
 @Entity(tableName = "transacoes")
 data class Transacao(
     @PrimaryKey(autoGenerate = true)
@@ -10,15 +11,13 @@ data class Transacao(
     val valor: Double,
     val categoriaId: Int,
     val data: String,
-
     val despesa: Boolean
 )
 
 @Entity(tableName = "categorias")
 data class Categoria(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
-
+    val id: Int = 0,
     val nome: String,
     val descricao: String
 )
