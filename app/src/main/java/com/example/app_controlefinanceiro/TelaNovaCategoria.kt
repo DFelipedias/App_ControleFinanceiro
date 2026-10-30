@@ -29,16 +29,47 @@ fun TelaNovaCategoria(navController: NavHostController, financeiro: FinanceiroVi
     var nome by remember { mutableStateOf("") }
     var descricao by remember { mutableStateOf("") }
     val contexto = LocalContext.current
-    Scaffold(containerColor = Fundo, topBar = { BarraTopo("Nova Categoria", navController) }) { padding ->
-        LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+    Scaffold(
+        containerColor = Fundo,
+        topBar = { BarraTopo("Nova Categoria", navController) }) { padding ->
+        LazyColumn(
+            Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
             item { CardResumo("Sua nova categoria", nome.ifBlank { "Organize seus gastos" }, true) }
-            item { Text("Agrupe movimentações parecidas para entender melhor seu dinheiro.", color = Color.Gray) }
+            item {
+                Text(
+                    "Agrupe movimentações parecidas para entender melhor seu dinheiro.",
+                    color = Color.Gray
+                )
+            }
             item { Campo("Nome da categoria", nome) { nome = it } }
-            item { OutlinedTextField(value = descricao, onValueChange = { descricao = it }, label = { Text("Descrição") }, modifier = Modifier.fillMaxWidth(), minLines = 3) }
+            item {
+                OutlinedTextField(
+                    value = descricao,
+                    onValueChange = { descricao = it },
+                    label = { Text("Descrição") },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3
+                )
+            }
             item {
                 Botao("SALVAR CATEGORIA") {
-                    if (nome.isBlank() || descricao.isBlank()) Toast.makeText(contexto, "Preencha o nome e a descrição.", Toast.LENGTH_SHORT).show()
-                    else if (financeiro.categorias.any { it.nome.equals(nome.trim(), true) }) Toast.makeText(contexto, "Essa categoria já existe.", Toast.LENGTH_SHORT).show()
+                    if (nome.isBlank() || descricao.isBlank()) Toast.makeText(
+                        contexto,
+                        "Preencha o nome e a descrição.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    else if (financeiro.categorias.any {
+                            it.nome.equals(
+                                nome.trim(),
+                                true
+                            )
+                        }) Toast.makeText(contexto, "Essa categoria já existe.", Toast.LENGTH_SHORT)
+                        .show()
                     else {
                         financeiro.adicionarCategoria(nome.trim(), descricao.trim())
                         navController.popBackStack()

@@ -26,28 +26,84 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
 fun TelaVisaoGeral(navController: NavHostController, financeiro: FinanceiroViewModel) {
-    Scaffold(containerColor = Fundo, bottomBar = { BottomNavBar(navController) }, floatingActionButton = {
-        FloatingActionButton(onClick = { navController.navigate(Rotas.NOVA_TRANSACAO) }, containerColor = Azul) { Icon(Icons.Default.Add, "Nova transação", tint = Color.White) }
-    }) { padding ->
-        LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            item { Text("Visão Geral", color = Texto, fontSize = 27.sp, fontWeight = FontWeight.Bold) }
+    Scaffold(
+        containerColor = Fundo,
+        bottomBar = { BottomNavBar(navController) },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navController.navigate(Rotas.NOVA_TRANSACAO) },
+                containerColor = Azul
+            ) { Icon(Icons.Default.Add, "Nova transação", tint = Color.White) }
+        }) { padding ->
+        LazyColumn(
+            Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
+                Text(
+                    "Visão Geral",
+                    color = Texto,
+                    fontSize = 27.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
             item { CardResumo("Saldo consolidado", dinheiro(financeiro.saldo()), true) }
             item {
                 Card(colors = CardDefaults.cardColors(containerColor = Color.White)) {
-                    Row(Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Column { Text("Receitas", color = Color.Gray); Text(dinheiro(financeiro.receitas()), color = Verde, fontWeight = FontWeight.Bold) }
-                        Column { Text("Despesas", color = Color.Gray); Text(dinheiro(financeiro.despesas()), color = Vermelho, fontWeight = FontWeight.Bold) }
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column {
+                            Text(
+                                "Receitas",
+                                color = Color.Gray
+                            ); Text(
+                            dinheiro(financeiro.receitas()),
+                            color = Verde,
+                            fontWeight = FontWeight.Bold
+                        )
+                        }
+                        Column {
+                            Text(
+                                "Despesas",
+                                color = Color.Gray
+                            ); Text(
+                            dinheiro(financeiro.despesas()),
+                            color = Vermelho,
+                            fontWeight = FontWeight.Bold
+                        )
+                        }
                     }
                 }
             }
             item { Botao("REGISTRAR TRANSAÇÃO") { navController.navigate(Rotas.NOVA_TRANSACAO) } }
             item {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text("Últimas transações", fontWeight = FontWeight.Bold, color = Texto)
                     TextButton(onClick = { navController.navigate(Rotas.EXTRATO) }) { Text("Ver todas") }
                 }
             }
-            items(financeiro.transacoes.reversed().take(3), key = { it.id }) { item -> CardTransacao(item, financeiro) { navController.navigate(Rotas.transacao(item.id)) } }
+            items(
+                financeiro.transacoes.reversed().take(3),
+                key = { it.id }) { item ->
+                CardTransacao(item, financeiro) {
+                    navController.navigate(
+                        Rotas.transacao(
+                            item.id
+                        )
+                    )
+                }
+            }
             if (financeiro.transacoes.isEmpty()) item { Text("Registre sua primeira transação para acompanhar o saldo.") }
             item { Spacer(Modifier.height(64.dp)) }
         }
