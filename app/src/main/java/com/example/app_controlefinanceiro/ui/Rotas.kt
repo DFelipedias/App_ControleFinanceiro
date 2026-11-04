@@ -1,4 +1,4 @@
-package com.example.app_controlefinanceiro
+package com.example.app_controlefinanceiro.ui
 
 object Rotas {
     const val INICIO = "inicio"

@@ -1,4 +1,6 @@
-package com.example.app_controlefinanceiro
+package com.example.app_controlefinanceiro.ui
+
+import com.example.app_controlefinanceiro.viewmodel.FinanceiroViewModel
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke

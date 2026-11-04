@@ -1,4 +1,8 @@
-package com.example.app_controlefinanceiro
+package com.example.app_controlefinanceiro.viewmodel
+
+import com.example.app_controlefinanceiro.data.local.AppDatabase
+import com.example.app_controlefinanceiro.data.local.Categoria
+import com.example.app_controlefinanceiro.data.local.Transacao
 
 import android.app.Application
 import androidx.compose.runtime.mutableStateListOf

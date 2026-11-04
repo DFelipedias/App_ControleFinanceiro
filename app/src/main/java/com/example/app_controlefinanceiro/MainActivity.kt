@@ -1,5 +1,8 @@
 package com.example.app_controlefinanceiro
 
+import com.example.app_controlefinanceiro.ui.AppNavigation
+import com.example.app_controlefinanceiro.ui.Azul
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent

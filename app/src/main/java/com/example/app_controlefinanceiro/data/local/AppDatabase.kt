@@ -1,4 +1,4 @@
-package com.example.app_controlefinanceiro
+package com.example.app_controlefinanceiro.data.local
 
 import android.content.Context
 import androidx.room.Database
