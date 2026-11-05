@@ -1,7 +1,6 @@
 package com.example.app_controlefinanceiro.ui
 
-import com.example.app_controlefinanceiro.viewmodel.FinanceiroViewModel
-import com.example.app_controlefinanceiro.data.local.Categoria
+import com.example.app_controlefinanceiro.viewmodel.CategoriaViewModel
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -28,9 +27,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun TelaNovaCategoria(navController: NavHostController, financeiro: FinanceiroViewModel) {
-    var nome by remember { mutableStateOf("") }
-    var descricao by remember { mutableStateOf("") }
+fun TelaNovaCategoria(navController: NavHostController, categorias: CategoriaViewModel) {
+    val estado by categorias.uiState.collectAsState()
+    LaunchedEffect(Unit) { categorias.iniciarNovaCategoria() }
+    val nome = estado.nome
+    val descricao = estado.descricao
     val contexto = LocalContext.current
     Scaffold(
         containerColor = Fundo,
@@ -49,11 +50,11 @@ fun TelaNovaCategoria(navController: NavHostController, financeiro: FinanceiroVi
                     color = Color.Gray
                 )
             }
-            item { Campo("Nome da categoria", nome) { nome = it } }
+            item { Campo("Nome da categoria", nome) { categorias.mudarNome(it) } }
             item {
                 OutlinedTextField(
                     value = descricao,
-                    onValueChange = { descricao = it },
+                    onValueChange = { categorias.mudarDescricao(it) },
                     label = { Text("Descrição") },
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3
@@ -61,21 +62,10 @@ fun TelaNovaCategoria(navController: NavHostController, financeiro: FinanceiroVi
             }
             item {
                 Botao("SALVAR CATEGORIA") {
-                    if (nome.isBlank() || descricao.isBlank()) Toast.makeText(
-                        contexto,
-                        "Preencha o nome e a descrição.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    else if (financeiro.categorias.any {
-                            it.nome.equals(
-                                nome.trim(),
-                                true
-                            )
-                        }) Toast.makeText(contexto, "Essa categoria já existe.", Toast.LENGTH_SHORT)
-                        .show()
-                    else {
-                        financeiro.adicionarCategoria(nome.trim(), descricao.trim())
+                    if (categorias.adicionarCategoria()) {
                         navController.popBackStack()
+                    } else {
+                        Toast.makeText(contexto, categorias.uiState.value.mensagem, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
