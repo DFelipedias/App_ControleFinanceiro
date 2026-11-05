@@ -1,35 +1,36 @@
 package com.example.app_controlefinanceiro.data.local
 
 import android.util.Log
+import com.example.app_controlefinanceiro.data.repository.TransacaoRepository
 
-suspend fun inserirTransacao(descricao: String, valor: Double, categoriaId: Int, data: String, despesa: Boolean, transacaoDao: TransacaoDao) {
+suspend fun inserirTransacao(descricao: String, valor: Double, categoriaId: Int, data: String, despesa: Boolean, transacaoRepository: TransacaoRepository) {
     try {
-        transacaoDao.inserir(Transacao(0, descricao, valor, categoriaId, data, despesa))
+        transacaoRepository.inserir(Transacao(0, descricao, valor, categoriaId, data, despesa))
     } catch (e: Exception) {
         Log.e("Erro ao adicionar", "Msg: ${e.message}")
     }
 }
 
-suspend fun buscarTransacao(transacaoDao: TransacaoDao): List<Transacao> {
+suspend fun buscarTransacao(transacaoRepository: TransacaoRepository): List<Transacao> {
     try {
-        return transacaoDao.buscarTransacao()
+        return transacaoRepository.buscarTransacao()
     } catch (e: Exception) {
         Log.e("Erro ao buscar", "Msg: ${e.message}")
         return emptyList()
     }
 }
 
-suspend fun deletarTransacao(transacao: Transacao, transacaoDao: TransacaoDao) {
+suspend fun deletarTransacao(transacao: Transacao, transacaoRepository: TransacaoRepository) {
     try {
-        transacaoDao.removerTransacao(transacao)
+        transacaoRepository.removerTransacao(transacao)
     } catch (e: Exception) {
         Log.e("Erro ao deletar", "Msg ${e.message}")
     }
 }
 
-suspend fun atualizarTransacao(transacao: Transacao, transacaoDao: TransacaoDao) {
+suspend fun atualizarTransacao(transacao: Transacao, transacaoRepository: TransacaoRepository) {
     try {
-        transacaoDao.atualizarTransacao(transacao)
+        transacaoRepository.atualizarTransacao(transacao)
     } catch (e: Exception) {
         Log.e("Erro ao atualizar", "Msg ${e.message}")
     }
