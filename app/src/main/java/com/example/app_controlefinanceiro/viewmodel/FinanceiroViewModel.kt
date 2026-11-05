@@ -10,6 +10,8 @@ import android.app.Application
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class FinanceiroViewModel(application: Application) : AndroidViewModel(application) {
@@ -26,7 +28,7 @@ class FinanceiroViewModel(application: Application) : AndroidViewModel(applicati
 
     fun carregarDados() {
         viewModelScope.launch {
-            val categoriasBanco = categoriaRepository.buscarTodas()
+            var categoriasBanco = categoriaRepository.buscarTodas().first()
             if (categoriasBanco.isEmpty()) {
                 val padrao = listOf(
                     Categoria(nome = "Alimentação", descricao = "Refeições e compras de mercado"),
@@ -35,19 +37,15 @@ class FinanceiroViewModel(application: Application) : AndroidViewModel(applicati
                     Categoria(nome = "Renda", descricao = "Salário e outras entradas")
                 )
                 padrao.forEach { categoriaRepository.inserir(it) }
-                categorias.clear()
-                categorias.addAll(categoriaRepository.buscarTodas())
-            } else {
-                categorias.clear()
-                categorias.addAll(categoriasBanco)
+                categoriasBanco = categoriaRepository.buscarTodas().first()
             }
 
-            val transacoesBanco = transacaoRepository.buscarTransacao()
-            if (transacoesBanco.isEmpty() && categorias.isNotEmpty()) {
-                val catRenda = categorias.find { it.nome == "Renda" }?.id ?: categorias.first().id
-                val catAlim = categorias.find { it.nome == "Alimentação" }?.id ?: categorias.first().id
-                val catTransp = categorias.find { it.nome == "Transporte" }?.id ?: categorias.first().id
-                val catSaude = categorias.find { it.nome == "Saúde" }?.id ?: categorias.first().id
+            val transacoesBanco = transacaoRepository.buscarTransacao().first()
+            if (transacoesBanco.isEmpty() && categoriasBanco.isNotEmpty()) {
+                val catRenda = categoriasBanco.find { it.nome == "Renda" }?.id ?: categoriasBanco.first().id
+                val catAlim = categoriasBanco.find { it.nome == "Alimentação" }?.id ?: categoriasBanco.first().id
+                val catTransp = categoriasBanco.find { it.nome == "Transporte" }?.id ?: categoriasBanco.first().id
+                val catSaude = categoriasBanco.find { it.nome == "Saúde" }?.id ?: categoriasBanco.first().id
 
                 val padraoTransacoes = listOf(
                     Transacao(descricao = "Salário", valor = 3500.0, categoriaId = catRenda, data = "01/10/2026", despesa = false),
@@ -57,11 +55,19 @@ class FinanceiroViewModel(application: Application) : AndroidViewModel(applicati
                     Transacao(descricao = "Farmácia", valor = 27.90, categoriaId = catSaude, data = "04/10/2026", despesa = true)
                 )
                 padraoTransacoes.forEach { transacaoRepository.inserir(it) }
-                transacoes.clear()
-                transacoes.addAll(transacaoRepository.buscarTransacao())
-            } else {
-                transacoes.clear()
-                transacoes.addAll(transacoesBanco)
+            }
+
+            launch {
+                categoriaRepository.buscarTodas().collect { lista ->
+                    categorias.clear()
+                    categorias.addAll(lista)
+                }
+            }
+            launch {
+                transacaoRepository.buscarTransacao().collect { lista ->
+                    transacoes.clear()
+                    transacoes.addAll(lista)
+                }
             }
         }
     }
@@ -70,8 +76,6 @@ class FinanceiroViewModel(application: Application) : AndroidViewModel(applicati
         viewModelScope.launch {
             val nova = Transacao(descricao = descricao, valor = valor, categoriaId = categoriaId, data = data, despesa = despesa)
             transacaoRepository.inserir(nova)
-            transacoes.clear()
-            transacoes.addAll(transacaoRepository.buscarTransacao())
         }
     }
 
@@ -79,16 +83,12 @@ class FinanceiroViewModel(application: Application) : AndroidViewModel(applicati
         viewModelScope.launch {
             val atualizada = item.copy(descricao = descricao, valor = valor, data = data)
             transacaoRepository.atualizarTransacao(atualizada)
-            transacoes.clear()
-            transacoes.addAll(transacaoRepository.buscarTransacao())
         }
     }
 
     fun removerTransacao(item: Transacao) {
         viewModelScope.launch {
             transacaoRepository.removerTransacao(item)
-            transacoes.clear()
-            transacoes.addAll(transacaoRepository.buscarTransacao())
         }
     }
 
@@ -96,8 +96,6 @@ class FinanceiroViewModel(application: Application) : AndroidViewModel(applicati
         viewModelScope.launch {
             val nova = Categoria(nome = nome, descricao = descricao)
             categoriaRepository.inserir(nova)
-            categorias.clear()
-            categorias.addAll(categoriaRepository.buscarTodas())
         }
     }
 
@@ -105,8 +103,6 @@ class FinanceiroViewModel(application: Application) : AndroidViewModel(applicati
         if (transacoes.any { it.categoriaId == item.id }) return false
         viewModelScope.launch {
             categoriaRepository.removerCategoria(item)
-            categorias.clear()
-            categorias.addAll(categoriaRepository.buscarTodas())
         }
         return true
     }

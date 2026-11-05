@@ -1,6 +1,7 @@
 package com.example.app_controlefinanceiro.data.local
 
 import android.util.Log
+import kotlinx.coroutines.flow.first
 import com.example.app_controlefinanceiro.data.repository.TransacaoRepository
 
 suspend fun inserirTransacao(descricao: String, valor: Double, categoriaId: Int, data: String, despesa: Boolean, transacaoRepository: TransacaoRepository) {
@@ -13,7 +14,7 @@ suspend fun inserirTransacao(descricao: String, valor: Double, categoriaId: Int,
 
 suspend fun buscarTransacao(transacaoRepository: TransacaoRepository): List<Transacao> {
     try {
-        return transacaoRepository.buscarTransacao()
+        return transacaoRepository.buscarTransacao().first()
     } catch (e: Exception) {
         Log.e("Erro ao buscar", "Msg: ${e.message}")
         return emptyList()
