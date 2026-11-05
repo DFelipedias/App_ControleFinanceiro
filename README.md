@@ -143,12 +143,10 @@ Na parte de código, os testes passaram sem problemas e não houve dificuldade e
 
 ### Prints e vídeos
 
-Os registros visuais desta etapa ainda precisam ser anexados. Os resultados acima correspondem aos testes realizados, mas esta parte da documentação ainda está pendente.
+O print abaixo mostra a divisão dos pacotes `ui`, `data.local`, `data.repository` e `viewmodel` no Android Studio.
 
-- [ ] Print dos pacotes expandidos no Android Studio.
-- [ ] Prints dos Repositories, DAOs com Flow, UiStates e Factories.
-- [ ] Vídeo curto mostrando cadastro, edição, exclusão, busca e filtro de transações.
-- [ ] Vídeo curto mostrando cadastro de categoria e bloqueio de exclusão quando ela tem transações.
-- [ ] Vídeo mostrando um registro salvo antes e depois de fechar e reabrir o app.
+![Estrutura dos pacotes no Android Studio](docs/evidencias/estrutura-pacotes.png)
+
+O vídeo de demonstração do aplicativo foi gravado e ainda precisa ser anexado ao repositório.
 
 Os arquivos em `docs/PROCESSO.md`, `docs/TESTES.md` e `docs/Documentacao_ControleFinanceiro_V2.docx` são materiais da etapa anterior. O relato do Trabalho 4 está neste README.
