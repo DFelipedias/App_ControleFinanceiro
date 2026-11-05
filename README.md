@@ -6,12 +6,10 @@ Aplicativo de controle financeiro feito em Kotlin com Jetpack Compose. Permite r
 
 Daniel, Leonardo e Marcelo.
 
-Na primeira entrega, Daniel ficou com a Visão Geral, Leonardo com o Extrato e Marcelo com Nova Transação.
-
 ## Como abrir e rodar
 
 1. Clone este repositório e abra no Android Studio a pasta que contém `settings.gradle.kts`.
-2. Para acompanhar o Trabalho 4 antes da integração na principal, selecione a branch `trabalho4-mvvm`.
+2. Para acompanhar a etapa 4 antes da integração na principal, selecione a branch `trabalho4-mvvm`.
 3. Use o JDK 21 para o Gradle, conforme a configuração de `gradle/gradle-daemon-jvm.properties`.
 4. Instale o SDK solicitado pelo projeto e aguarde a sincronização. O projeto usa AGP 9.0.1 e compile SDK 36.1.
 5. Selecione um emulador ou celular com Android 7.0 (API 24) ou superior e execute o módulo `app`.
@@ -37,11 +35,11 @@ Os dados ficam salvos no banco local com Room e continuam disponíveis depois de
 
 ## Trabalho 4 — MVVM
 
-O Trabalho 4 foi feito no mesmo repositório do Trabalho 3. A mudança foi na organização do código. As telas, os campos e as funções do aplicativo foram mantidos.
+O etapa 4 foi feito no mesmo repositório do Trabalho 3. A mudança foi na organização do código. As telas, os campos e as funções do aplicativo foram mantidos.
 
 ### Como estava e o que mudou
 
-No Trabalho 3, o `FinanceiroViewModel` concentrava as categorias e as transações e acessava os DAOs diretamente. As consultas retornavam listas, então era necessário buscar os dados novamente depois de cadastrar, editar ou remover um registro. Parte do estado e das validações dos formulários ficava nas telas, em variáveis com `remember`.
+No etapa 3, o `FinanceiroViewModel` concentrava as categorias e as transações e acessava os DAOs diretamente. As consultas retornavam listas, então era necessário buscar os dados novamente depois de cadastrar, editar ou remover um registro. Parte do estado e das validações dos formulários ficava nas telas, em variáveis com `remember`.
 
 A reorganização foi feita por etapas, com um commit para cada mudança e teste no Android Studio antes de continuar.
 
@@ -147,6 +145,6 @@ O print abaixo mostra a divisão dos pacotes `ui`, `data.local`, `data.repositor
 
 ![Estrutura dos pacotes no Android Studio](docs/evidencias/estrutura-pacotes.png)
 
-O vídeo de demonstração do aplicativo foi gravado e ainda precisa ser anexado ao repositório.
+Vídeo de demonstração rápida do aplicado.
 
-Os arquivos em `docs/PROCESSO.md`, `docs/TESTES.md` e `docs/Documentacao_ControleFinanceiro_V2.docx` são materiais da etapa anterior. O relato do Trabalho 4 está neste README.
+https://drive.google.com/file/d/1P2X24CR_9ZFHvsseuN5-aUbgXGIeSpMO/view?usp=drivesdk
