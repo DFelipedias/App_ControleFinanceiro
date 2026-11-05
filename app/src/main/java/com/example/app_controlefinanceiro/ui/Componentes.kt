@@ -1,4 +1,6 @@
-package com.example.app_controlefinanceiro
+package com.example.app_controlefinanceiro.ui
+
+import com.example.app_controlefinanceiro.data.local.Transacao
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -62,15 +64,15 @@ fun CardResumo(titulo: String, valor: String, escuro: Boolean = false) {
 }
 
 @Composable
-fun CardTransacao(item: Transacao, financeiro: FinanceiroViewModel, abrir: () -> Unit) {
+fun CardTransacao(item: Transacao, nomeCategoria: String, remover: () -> Unit, abrir: () -> Unit) {
     Card(modifier = Modifier.fillMaxWidth().clickable(onClick = abrir), colors = CardDefaults.cardColors(containerColor = Color.White), border = BorderStroke(1.dp, Color(0xFFDCE1E7))) {
         Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 Text(item.descricao, color = Texto, fontWeight = FontWeight.Bold)
-                Text("${financeiro.nomeCategoria(item.categoriaId)} • ${item.data}", fontSize = 12.sp, color = Color.Gray)
+                Text("${nomeCategoria} • ${item.data}", fontSize = 12.sp, color = Color.Gray)
                 Text((if (item.despesa) "− " else "+ ") + dinheiro(item.valor), color = if (item.despesa) Vermelho else Verde, fontWeight = FontWeight.Bold)
             }
-            IconButton(onClick = { financeiro.removerTransacao(item) }) { Icon(Icons.Default.Delete, "Remover ${item.descricao}", tint = Vermelho) }
+            IconButton(onClick = remover) { Icon(Icons.Default.Delete, "Remover ${item.descricao}", tint = Vermelho) }
         }
     }
 }

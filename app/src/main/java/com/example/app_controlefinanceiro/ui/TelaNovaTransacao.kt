@@ -1,4 +1,6 @@
-package com.example.app_controlefinanceiro
+package com.example.app_controlefinanceiro.ui
+
+import com.example.app_controlefinanceiro.viewmodel.TransacaoViewModel
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -25,12 +27,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun TelaNovaTransacao(navController: NavHostController, financeiro: FinanceiroViewModel) {
-    var valor by remember { mutableStateOf("") }
-    var descricao by remember { mutableStateOf("") }
-    var data by remember { mutableStateOf("") }
-    var despesa by remember { mutableStateOf(true) }
-    var categoriaId by remember { mutableStateOf<Int?>(financeiro.categorias.firstOrNull()?.id) }
+fun TelaNovaTransacao(navController: NavHostController, transacoes: TransacaoViewModel) {
+    val estado by transacoes.uiState.collectAsState()
+    LaunchedEffect(Unit) { transacoes.iniciarNovaTransacao() }
+    val valor = estado.valor
+    val descricao = estado.descricao
+    val data = estado.data
+    val despesa = estado.despesa
+    val categoriaId = estado.categoriaId
     val contexto = LocalContext.current
     Scaffold(
         containerColor = Fundo,
@@ -46,29 +50,29 @@ fun TelaNovaTransacao(navController: NavHostController, financeiro: FinanceiroVi
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Button(
-                        onClick = { despesa = true },
+                        onClick = { transacoes.mudarDespesa(true) },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(containerColor = if (despesa) Vermelho else Color.Gray)
                     ) { Text("Despesa (−)") }
                     Button(
-                        onClick = { despesa = false },
+                        onClick = { transacoes.mudarDespesa(false) },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(containerColor = if (!despesa) Verde else Color.Gray)
                     ) { Text("Receita (+)") }
                 }
             }
-            item { Campo("Valor (ex.: 38,50)", valor) { valor = it } }
-            item { Campo("Descrição", descricao) { descricao = it } }
-            item { Campo("Data (dia/mês/ano)", data) { data = it } }
+            item { Campo("Valor (ex.: 38,50)", valor) { transacoes.mudarValor(it) } }
+            item { Campo("Descrição", descricao) { transacoes.mudarDescricao(it) } }
+            item { Campo("Data (dia/mês/ano)", data) { transacoes.mudarData(it) } }
             item { Text("Categoria", fontWeight = FontWeight.Bold) }
             item {
                 Row(
                     Modifier.horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    for (categoria in financeiro.categorias) {
+                    for (categoria in estado.categorias) {
                         Button(
-                            onClick = { categoriaId = categoria.id },
+                            onClick = { transacoes.mudarCategoria(categoria.id) },
                             colors = ButtonDefaults.buttonColors(containerColor = if (categoriaId == categoria.id) Azul else Color.Gray)
                         ) { Text(categoria.nome) }
                     }
@@ -77,24 +81,10 @@ fun TelaNovaTransacao(navController: NavHostController, financeiro: FinanceiroVi
             item { TextButton(onClick = { navController.navigate(Rotas.NOVA_CATEGORIA) }) { Text("Cadastrar uma categoria") } }
             item {
                 Botao("SALVAR TRANSAÇÃO") {
-                    val numero = valor.replace(",", ".").toDoubleOrNull()
-                    if (descricao.isBlank() || numero == null || !numero.isFinite() || numero <= 0 || categoriaId == null || financeiro.categorias.none { it.id == categoriaId } || !data.matches(
-                            Regex("[0-9]{2}/[0-9]{2}/[0-9]{4}")
-                        )) {
-                        Toast.makeText(
-                            contexto,
-                            "Preencha a descrição, o valor positivo, a categoria e a data no formato indicado.",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else {
-                        financeiro.adicionarTransacao(
-                            descricao.trim(),
-                            numero,
-                            categoriaId!!,
-                            data.trim(),
-                            despesa
-                        )
+                    if (transacoes.adicionarTransacao()) {
                         navController.popBackStack()
+                    } else {
+                        Toast.makeText(contexto, transacoes.uiState.value.mensagem, Toast.LENGTH_LONG).show()
                     }
                 }
             }

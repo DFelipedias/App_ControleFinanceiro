@@ -1,5 +1,6 @@
-package com.example.app_controlefinanceiro
+package com.example.app_controlefinanceiro.data.local
 
+import kotlinx.coroutines.flow.Flow
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -13,7 +14,7 @@ interface CategoriaDao {
     suspend fun inserir(categoria: Categoria)
 
     @Query("SELECT * FROM categorias")
-    suspend fun buscarTodas(): List<Categoria>
+    fun buscarTodas(): Flow<List<Categoria>>
 
     @Update
     suspend fun atualizarCategoria(categoria: Categoria)

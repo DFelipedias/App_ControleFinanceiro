@@ -1,4 +1,7 @@
-package com.example.app_controlefinanceiro
+package com.example.app_controlefinanceiro.ui
+
+import com.example.app_controlefinanceiro.viewmodel.CategoriaViewModel
+import com.example.app_controlefinanceiro.viewmodel.TransacaoViewModel
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -25,11 +28,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun TelaDetalhesCategoria(navController: NavHostController, financeiro: FinanceiroViewModel, id: Int?) {
-    val categoria = financeiro.categorias.find { it.id == id }
-    val movimentacoes = financeiro.transacoes.filter { it.categoriaId == id }
-    val despesas = movimentacoes.filter { it.despesa }.sumOf { it.valor }
-    val receitas = movimentacoes.filter { !it.despesa }.sumOf { it.valor }
+fun TelaDetalhesCategoria(navController: NavHostController, categorias: CategoriaViewModel, transacoes: TransacaoViewModel, id: Int?) {
+    val estado by categorias.uiState.collectAsState()
+    LaunchedEffect(id) { categorias.selecionarCategoria(id) }
+    val categoria = estado.categoriaSelecionada
+    val movimentacoes = estado.movimentacoes
+    val despesas = estado.despesas
+    val receitas = estado.receitas
     Scaffold(containerColor = Fundo, topBar = { BarraTopo("Detalhes da Categoria", navController) }) { padding ->
         LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             if (categoria == null) item { Text("Categoria não encontrada.") }
@@ -38,9 +43,9 @@ fun TelaDetalhesCategoria(navController: NavHostController, financeiro: Financei
                 item { Text(categoria.descricao, color = Texto, fontSize = 18.sp) }
                 item { Text("O card mostra o total de despesas desta categoria.", color = Color.Gray) }
                 item { CardResumo("Receitas da categoria", dinheiro(receitas)) }
-                item { Text("${movimentacoes.size} transações • Resultado: ${dinheiro(receitas - despesas)}", fontWeight = FontWeight.Bold, color = Texto) }
+                item { Text("${movimentacoes.size} transações • Resultado: ${dinheiro(estado.resultado)}", fontWeight = FontWeight.Bold, color = Texto) }
                 item { Text("Movimentações relacionadas", fontSize = 20.sp, fontWeight = FontWeight.Bold) }
-                items(movimentacoes.reversed(), key = { it.id }) { item -> CardTransacao(item, financeiro) { navController.navigate(Rotas.transacao(item.id)) } }
+                items(movimentacoes, key = { it.id }) { item -> CardTransacao(item, estado.nomeCategoria(item.categoriaId), { transacoes.removerTransacao(item) }) { navController.navigate(Rotas.transacao(item.id)) } }
                 if (movimentacoes.isEmpty()) item { Text("Esta categoria ainda não tem transações.", color = Color.Gray) }
                 item { Botao("REGISTRAR TRANSAÇÃO") { navController.navigate(Rotas.NOVA_TRANSACAO) } }
             }

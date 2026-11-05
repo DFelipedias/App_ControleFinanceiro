@@ -1,4 +1,6 @@
-package com.example.app_controlefinanceiro
+package com.example.app_controlefinanceiro.ui
+
+import com.example.app_controlefinanceiro.viewmodel.CategoriaViewModel
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -25,14 +27,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun TelaCategorias(navController: NavHostController, financeiro: FinanceiroViewModel) {
+fun TelaCategorias(navController: NavHostController, categorias: CategoriaViewModel) {
+    val estado by categorias.uiState.collectAsState()
     val contexto = LocalContext.current
     Scaffold(containerColor = Fundo, bottomBar = { BottomNavBar(navController) }) { padding ->
         LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { Text("Categorias", fontSize = 27.sp, fontWeight = FontWeight.Bold, color = Texto) }
-            item { CardResumo("Organize suas movimentações", "${financeiro.categorias.size} categorias", true) }
+            item { CardResumo("Organize suas movimentações", "${estado.categorias.size} categorias", true) }
             item { Botao("NOVA CATEGORIA") { navController.navigate(Rotas.NOVA_CATEGORIA) } }
-            items(financeiro.categorias, key = { it.id }) { categoria ->
+            items(estado.categorias, key = { it.id }) { categoria ->
                 Card(Modifier.fillMaxWidth().clickable { navController.navigate(Rotas.categoria(categoria.id)) }, colors = CardDefaults.cardColors(containerColor = Color.White), border = BorderStroke(1.dp, Color(0xFFDCE1E7))) {
                     Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Category, null, tint = Azul)
@@ -40,15 +43,15 @@ fun TelaCategorias(navController: NavHostController, financeiro: FinanceiroViewM
                         Column(Modifier.weight(1f)) {
                             Text(categoria.nome, fontWeight = FontWeight.Bold, color = Texto)
                             Text(categoria.descricao, color = Color.Gray, fontSize = 13.sp)
-                            Text("${financeiro.transacoes.count { it.categoriaId == categoria.id }} transações", color = Azul, fontSize = 12.sp)
+                            Text("${estado.quantidadeTransacoes(categoria.id)} transações", color = Azul, fontSize = 12.sp)
                         }
                         IconButton(onClick = {
-                            if (!financeiro.removerCategoria(categoria)) Toast.makeText(contexto, "Remova primeiro as transações desta categoria.", Toast.LENGTH_LONG).show()
+                            if (!categorias.removerCategoria(categoria)) Toast.makeText(contexto, categorias.uiState.value.mensagem, Toast.LENGTH_LONG).show()
                         }) { Icon(Icons.Default.Delete, "Remover ${categoria.nome}", tint = Vermelho) }
                     }
                 }
             }
-            if (financeiro.categorias.isEmpty()) item { Text("Cadastre uma categoria para organizar suas transações.") }
+            if (estado.categorias.isEmpty()) item { Text("Cadastre uma categoria para organizar suas transações.") }
         }
     }
 }

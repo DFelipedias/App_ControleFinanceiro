@@ -1,4 +1,6 @@
-package com.example.app_controlefinanceiro
+package com.example.app_controlefinanceiro.ui
+
+import com.example.app_controlefinanceiro.viewmodel.TransacaoViewModel
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -25,15 +27,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun TelaExtrato(navController: NavHostController, financeiro: FinanceiroViewModel) {
-    var pesquisa by remember { mutableStateOf("") }
-    var categoriaId by remember { mutableStateOf<Int?>(null) }
-    val resultado = financeiro.transacoes.filter {
-        (it.descricao.contains(pesquisa, true) || dinheiro(it.valor).contains(
-            pesquisa,
-            true
-        )) && (categoriaId == null || it.categoriaId == categoriaId)
-    }
+fun TelaExtrato(navController: NavHostController, transacoes: TransacaoViewModel) {
+    val estado by transacoes.uiState.collectAsState()
+    LaunchedEffect(Unit) { transacoes.iniciarExtrato() }
+    val pesquisa = estado.pesquisa
+    val categoriaId = estado.categoriaFiltroId
+    val resultado = estado.resultado
     Scaffold(containerColor = Fundo, bottomBar = { BottomNavBar(navController) }) { padding ->
         LazyColumn(
             Modifier
@@ -50,19 +49,19 @@ fun TelaExtrato(navController: NavHostController, financeiro: FinanceiroViewMode
                     color = Texto
                 )
             }
-            item { Campo("Buscar por nome ou valor", pesquisa) { pesquisa = it } }
+            item { Campo("Buscar por nome ou valor", pesquisa) { transacoes.mudarPesquisa(it) } }
             item {
                 Row(
                     Modifier.horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Button(
-                        onClick = { categoriaId = null },
+                        onClick = { transacoes.mudarFiltroCategoria(null) },
                         colors = ButtonDefaults.buttonColors(containerColor = if (categoriaId == null) Azul else Color.Gray)
                     ) { Text("Todas") }
-                    for (categoria in financeiro.categorias) {
+                    for (categoria in estado.categorias) {
                         Button(
-                            onClick = { categoriaId = categoria.id },
+                            onClick = { transacoes.mudarFiltroCategoria(categoria.id) },
                             colors = ButtonDefaults.buttonColors(containerColor = if (categoriaId == categoria.id) Azul else Color.Gray)
                         ) { Text(categoria.nome) }
                     }
@@ -70,10 +69,11 @@ fun TelaExtrato(navController: NavHostController, financeiro: FinanceiroViewMode
             }
             item { Botao("NOVA TRANSAÇÃO") { navController.navigate(Rotas.NOVA_TRANSACAO) } }
             item { Text("${resultado.size} transações encontradas", color = Color.Gray) }
-            items(resultado.reversed(), key = { it.id }) { item ->
+            items(resultado, key = { it.id }) { item ->
                 CardTransacao(
                     item,
-                    financeiro
+                    estado.nomeCategoria(item.categoriaId),
+                    { transacoes.removerTransacao(item) }
                 ) { navController.navigate(Rotas.transacao(item.id)) }
             }
             if (resultado.isEmpty()) item {

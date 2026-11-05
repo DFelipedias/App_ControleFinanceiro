@@ -1,5 +1,6 @@
-package com.example.app_controlefinanceiro
+package com.example.app_controlefinanceiro.data.local
 
+import kotlinx.coroutines.flow.Flow
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -13,7 +14,7 @@ interface TransacaoDao {
     suspend fun inserir(transacao: Transacao)
 
     @Query("SELECT * FROM transacoes")
-    suspend fun buscarTransacao(): List<Transacao>
+    fun buscarTransacao(): Flow<List<Transacao>>
 
     @Update
     suspend fun atualizarTransacao(transacao: Transacao)

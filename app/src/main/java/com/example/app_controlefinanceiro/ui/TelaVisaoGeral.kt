@@ -1,4 +1,6 @@
-package com.example.app_controlefinanceiro
+package com.example.app_controlefinanceiro.ui
+
+import com.example.app_controlefinanceiro.viewmodel.TransacaoViewModel
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -25,7 +27,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun TelaVisaoGeral(navController: NavHostController, financeiro: FinanceiroViewModel) {
+fun TelaVisaoGeral(navController: NavHostController, transacoes: TransacaoViewModel) {
+    val estado by transacoes.uiState.collectAsState()
     Scaffold(
         containerColor = Fundo,
         bottomBar = { BottomNavBar(navController) },
@@ -50,7 +53,7 @@ fun TelaVisaoGeral(navController: NavHostController, financeiro: FinanceiroViewM
                     fontWeight = FontWeight.Bold
                 )
             }
-            item { CardResumo("Saldo consolidado", dinheiro(financeiro.saldo()), true) }
+            item { CardResumo("Saldo consolidado", dinheiro(estado.saldo), true) }
             item {
                 Card(colors = CardDefaults.cardColors(containerColor = Color.White)) {
                     Row(
@@ -64,7 +67,7 @@ fun TelaVisaoGeral(navController: NavHostController, financeiro: FinanceiroViewM
                                 "Receitas",
                                 color = Color.Gray
                             ); Text(
-                            dinheiro(financeiro.receitas()),
+                            dinheiro(estado.receitas),
                             color = Verde,
                             fontWeight = FontWeight.Bold
                         )
@@ -74,7 +77,7 @@ fun TelaVisaoGeral(navController: NavHostController, financeiro: FinanceiroViewM
                                 "Despesas",
                                 color = Color.Gray
                             ); Text(
-                            dinheiro(financeiro.despesas()),
+                            dinheiro(estado.despesas),
                             color = Vermelho,
                             fontWeight = FontWeight.Bold
                         )
@@ -94,9 +97,9 @@ fun TelaVisaoGeral(navController: NavHostController, financeiro: FinanceiroViewM
                 }
             }
             items(
-                financeiro.transacoes.reversed().take(3),
+                estado.ultimasTransacoes,
                 key = { it.id }) { item ->
-                CardTransacao(item, financeiro) {
+                CardTransacao(item, estado.nomeCategoria(item.categoriaId), { transacoes.removerTransacao(item) }) {
                     navController.navigate(
                         Rotas.transacao(
                             item.id
@@ -104,7 +107,7 @@ fun TelaVisaoGeral(navController: NavHostController, financeiro: FinanceiroViewM
                     )
                 }
             }
-            if (financeiro.transacoes.isEmpty()) item { Text("Registre sua primeira transação para acompanhar o saldo.") }
+            if (estado.transacoes.isEmpty()) item { Text("Registre sua primeira transação para acompanhar o saldo.") }
             item { Spacer(Modifier.height(64.dp)) }
         }
     }

@@ -1,4 +1,6 @@
-package com.example.app_controlefinanceiro
+package com.example.app_controlefinanceiro.ui
+
+import com.example.app_controlefinanceiro.viewmodel.TransacaoViewModel
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -27,15 +29,17 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 @Composable
 fun TelaDetalhesTransacao(
     navController: NavHostController,
-    financeiro: FinanceiroViewModel,
+    transacoes: TransacaoViewModel,
     id: Int?
 ) {
-    val item = financeiro.transacoes.find { it.id == id }
+    val estado by transacoes.uiState.collectAsState()
+    LaunchedEffect(id) { transacoes.selecionarTransacao(id) }
+    val item = estado.transacaoSelecionada
     val contexto = LocalContext.current
-    var editar by remember { mutableStateOf(false) }
-    var descricao by remember(id) { mutableStateOf(item?.descricao ?: "") }
-    var valor by remember(id) { mutableStateOf(item?.valor?.toString() ?: "") }
-    var data by remember(id) { mutableStateOf(item?.data ?: "") }
+    val editar = estado.editando
+    val descricao = estado.descricaoEdicao
+    val valor = estado.valorEdicao
+    val data = estado.dataEdicao
     Scaffold(
         containerColor = Fundo,
         topBar = { BarraTopo("Detalhes da Transação", navController) }) { padding ->
@@ -65,7 +69,7 @@ fun TelaDetalhesTransacao(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             Text(item.descricao, fontWeight = FontWeight.Bold, fontSize = 22.sp)
-                            Text("Categoria: ${financeiro.nomeCategoria(item.categoriaId)}")
+                            Text("Categoria: ${estado.nomeCategoria(item.categoriaId)}")
                             Text("Data: ${item.data}")
                             Text(
                                 "Impacto no saldo: " + (if (item.despesa) "− " else "+ ") + dinheiro(
@@ -77,31 +81,17 @@ fun TelaDetalhesTransacao(
                 }
                 item {
                     Botao(if (editar) "CANCELAR EDIÇÃO" else "EDITAR TRANSAÇÃO") {
-                        editar = !editar
+                        transacoes.alternarEdicao()
                     }
                 }
                 if (editar) {
-                    item { Campo("Descrição", descricao) { descricao = it } }
-                    item { Campo("Valor", valor) { valor = it } }
-                    item { Campo("Data (dia/mês/ano)", data) { data = it } }
+                    item { Campo("Descrição", descricao) { transacoes.mudarDescricaoEdicao(it) } }
+                    item { Campo("Valor", valor) { transacoes.mudarValorEdicao(it) } }
+                    item { Campo("Data (dia/mês/ano)", data) { transacoes.mudarDataEdicao(it) } }
                     item {
                         Botao("SALVAR ALTERAÇÕES") {
-                            val numero = valor.replace(",", ".").toDoubleOrNull()
-                            if (descricao.isBlank() || numero == null || !numero.isFinite() || numero <= 0 || !data.matches(
-                                    Regex("[0-9]{2}/[0-9]{2}/[0-9]{4}")
-                                )
-                            ) Toast.makeText(
-                                contexto,
-                                "Confira a descrição, o valor e a data.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            else {
-                                financeiro.editarTransacao(
-                                    item,
-                                    descricao.trim(),
-                                    numero,
-                                    data.trim()
-                                ); editar = false
+                            if (!transacoes.editarTransacao()) {
+                                Toast.makeText(contexto, transacoes.uiState.value.mensagem, Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
